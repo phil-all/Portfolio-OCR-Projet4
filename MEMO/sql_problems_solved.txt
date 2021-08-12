@@ -1,0 +1,21 @@
+1-Nouveautés MySQL 8.0 : Les indexes invisibles
+-----------------------------------------------
+Problème: lors de l'exécution dans phpmyadmin du script sql généré par mysqlworkbench > erreur !!!
+
+il suffit d'effacer VISIBLE (rajouté sur les INDEX), le problème est mariadb...
+
+	https://blog.capdata.fr/index.php/nouveautes-mysql-8-0-les-indexes-invisibles/
+
+	https://stackoverflow.com/questions/50393245/mysql-error-1064-syntax-but-everything-seems-fine
+
+Le problème venant de mariadb et non mysql (qui est meme version que workbench, c.a.d. 8.0.26),
+on va reparamétrer en mysql version 5 le projet workbench:
+model > model options > mysql > target: 5.7.34 > ok
+
+
+
+
+2-Cardinalité 0..n dans workbench
+---------------------------------
+sélectionner la relation
+dans onglet foregin key -> décocher mandatory
