@@ -148,7 +148,7 @@ INSERT INTO ligne_menu_du_jour (date, fiche_produit_id) VALUES
 -- détail pour le 09/08/2021
 
 -- remises à livreur
-INSERT INTO produit (ligne_menu_du_jour_id, ligne_menu_du_jour_fiche_produit_id, cuisinier_utilisateur_id, livreur_utilisateur_id) VALUES
+INSERT INTO produit (ligne_menu_du_jour_id, fiche_produit_id, cuisinier_utilisateur_id, livreur_utilisateur_id) VALUES
 	-- item 1 menu du 09/08/2021
     	(1, 1, 4, 2), (1, 1, 4, 2), (1, 1, 4, 2), (1, 1, 4, 2), (1, 1, 4, 2), (1, 1, 4, 2), (1, 1, 4, 2), (1, 1, 4, 2), (1, 1, 4, 2), (1, 1, 4, 2),
         (1, 1, 4, 3), (1, 1, 4, 3), (1, 1, 4, 3), (1, 1, 4, 3), (1, 1, 4, 3), (1, 1, 4, 3), (1, 1, 4, 3), (1, 1, 4, 3), (1, 1, 4, 3), (1, 1, 4, 3),
@@ -163,12 +163,12 @@ INSERT INTO produit (ligne_menu_du_jour_id, ligne_menu_du_jour_fiche_produit_id,
         (4, 16, 4, 3), (4, 16, 4, 3), (4, 16, 4, 3), (4, 16, 4, 3), (4, 16, 4, 3), (4, 16, 4, 3), (4, 16, 4, 3), (4, 16, 4, 3), (4, 16, 4, 3), (4, 16, 4, 3);
 
 -- non remises à livreur (réassort éventuel) le 09/08/2021
-INSERT INTO produit (ligne_menu_du_jour_id, ligne_menu_du_jour_fiche_produit_id, cuisinier_utilisateur_id) VALUES
+INSERT INTO produit (ligne_menu_du_jour_id, fiche_produit_id, cuisinier_utilisateur_id) VALUES
 	-- item 1 menu du jour, quantité 1
     (1, 1, 4), (1, 1, 4), (1, 1, 4), (1, 1, 4);
 
 -- A la volée pour les autres jours
-INSERT INTO produit (ligne_menu_du_jour_id, ligne_menu_du_jour_fiche_produit_id, cuisinier_utilisateur_id, livreur_utilisateur_id) VALUES
+INSERT INTO produit (ligne_menu_du_jour_id, fiche_produit_id, cuisinier_utilisateur_id, livreur_utilisateur_id) VALUES
     (5, 3, 4, 2), (5, 3, 4, 2), (5, 3, 4, 2), (5, 3, 4, 2), (5, 3, 4, 2), (5, 3, 4, 2), (5, 3, 4, 2), (5, 3, 4, 2), (5, 3, 4, 2), (5, 3, 4, 2), 
 	(5, 3, 4, 3), (5, 3, 4, 3), (5, 3, 4, 3), (5, 3, 4, 3), (5, 3, 4, 3), (5, 3, 4, 3), (5, 3, 4, 3), (5, 3, 4, 3), (5, 3, 4, 3), (5, 3, 4, 3),
     (6, 4, 4, 2), (6, 4, 4, 2), (6, 4, 4, 2), (6, 4, 4, 2), (6, 4, 4, 2), (6, 4, 4, 2), (6, 4, 4, 2), (6, 4, 4, 2), (6, 4, 4, 2), (6, 4, 4, 2),

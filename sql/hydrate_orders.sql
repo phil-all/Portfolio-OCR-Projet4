@@ -18,7 +18,7 @@ CREATE TABLE tmp_cart (
     INSERT INTO reglement (client_utilisateur_id, montant, date_paiement) VALUES (6, (SELECT SUM(prix) FROM tmp_cart), '2021-08-09 11:45:37');
 
 -- on créé une commande
-INSERT INTO commande (reglement_client_utilisateur_id, adresse_client_id, reglement_id) VALUES
+INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id) VALUES
     (6,
     (SELECT id FROM adresse_client WHERE (client_utilisateur_id = 6 AND principale = 1)),
     (SELECT MAX( id ) FROM reglement));
@@ -57,19 +57,19 @@ CREATE TABLE tmp_cart (
 	id INT UNSIGNED NOT NULL,
 	prix DECIMAL(4,2) UNSIGNED NOT NULL);
 
-INSERT INTO tmp_cart (id, prix) VALUES (2, (SELECT prix FROM fiche_produit WHERE id = 1));
+INSERT INTO tmp_cart (id, prix) VALUES (2, (SELECT prix FROM fiche_produit WHERE id = 2));
 INSERT INTO tmp_cart (id, prix) VALUES (15, (SELECT prix FROM fiche_produit WHERE id= 15));
-INSERT INTO tmp_cart (id, prix) VALUES (15, (SELECT prix FROM fiche_produit WHERE id= 16));
+INSERT INTO tmp_cart (id, prix) VALUES (16, (SELECT prix FROM fiche_produit WHERE id= 16));
 
 INSERT INTO reglement (client_utilisateur_id, montant, date_paiement) VALUES (5, (SELECT SUM(prix) FROM tmp_cart), '2021-08-09 11:52:03');
 
-INSERT INTO commande (reglement_client_utilisateur_id, adresse_client_id, reglement_id) VALUES
+INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id) VALUES
     (5,
     (SELECT id FROM adresse_client WHERE (client_utilisateur_id = 5 AND principale = 1)),
     (SELECT MAX( id ) FROM reglement));
 
 INSERT INTO ligne_commande (fiche_produit_id, quantite, commande_id) VALUES
-    (1, (SELECT COUNT(id) FROM tmp_cart WHERE id = 1), (SELECT MAX( id ) FROM commande)),
+    (2, (SELECT COUNT(id) FROM tmp_cart WHERE id = 2), (SELECT MAX( id ) FROM commande)),
     (15, (SELECT COUNT(id) FROM tmp_cart WHERE id = 15), (SELECT MAX( id ) FROM commande)),
 	(16, (SELECT COUNT(id) FROM tmp_cart WHERE id = 15), (SELECT MAX( id ) FROM commande));
 
@@ -89,6 +89,49 @@ UPDATE commande SET
 	heure_remise_client = '2021-08-09 12:17:01'
 	WHERE id = 2;
 
+
+-- -------------------------------------------------
+-- création commande 3, client 5, adresse secondaire
+-- -------------------------------------------------
+BEGIN;
+
+CREATE TABLE tmp_cart (
+	id INT UNSIGNED NOT NULL,
+	prix DECIMAL(4,2) UNSIGNED NOT NULL);
+
+INSERT INTO tmp_cart (id, prix) VALUES (3, (SELECT prix FROM fiche_produit WHERE id = 3));
+INSERT INTO tmp_cart (id, prix) VALUES (4, (SELECT prix FROM fiche_produit WHERE id= 4));
+INSERT INTO tmp_cart (id, prix) VALUES (17, (SELECT prix FROM fiche_produit WHERE id= 17));
+INSERT INTO tmp_cart (id, prix) VALUES (17, (SELECT prix FROM fiche_produit WHERE id= 17));
+
+INSERT INTO reglement (client_utilisateur_id, montant, date_paiement) VALUES (5, (SELECT SUM(prix) FROM tmp_cart), '2021-08-10 11:35:03');
+
+INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id) VALUES
+    (5,
+    (SELECT id FROM adresse_client WHERE (client_utilisateur_id = 5 AND principale = 0)),
+    (SELECT MAX( id ) FROM reglement));
+
+INSERT INTO ligne_commande (fiche_produit_id, quantite, commande_id) VALUES
+    (3, (SELECT COUNT(id) FROM tmp_cart WHERE id = 3), (SELECT MAX( id ) FROM commande)),
+    (4, (SELECT COUNT(id) FROM tmp_cart WHERE id = 4), (SELECT MAX( id ) FROM commande)),
+	(17, (SELECT COUNT(id) FROM tmp_cart WHERE id = 17), (SELECT MAX( id ) FROM commande));
+
+DROP TABLE IF EXISTS tmp_cart;
+
+COMMIT;
+
+-- LIVRIASON par livreur id 3 de la commande id 2
+UPDATE produit SET commande_id = 3 WHERE id = 95;
+UPDATE produit SET commande_id = 3 WHERE id = 115;
+UPDATE produit SET commande_id = 3 WHERE id = 135;
+UPDATE produit SET commande_id = 3 WHERE id = 136;
+
+UPDATE commande SET
+	livreur_utilisateur_id = 3,
+	statut_commande_id = 3,
+	heure_prise_en_charge = '2021-08-10 11:35:18',
+	heure_remise_client = '2021-08-10 12:08:33'
+	WHERE id = 3;
 
 
 

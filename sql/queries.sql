@@ -29,7 +29,10 @@ SELECT p.id, l.date
 FROM produit AS p 
 JOIN ligne_menu_du_jour AS l 
 ON l.id = p.ligne_menu_du_jour_id 
-WHERE p.commande_id IS NULL AND l.fiche_produit_id = 15 AND p.livreur_utilisateur_id = 3 AND l.date = '2021-08-09'; 
+WHERE p.commande_id IS NULL
+	AND l.fiche_produit_id = 15 
+	AND p.livreur_utilisateur_id = 3
+	AND l.date = '2021-08-09';
 
 
 -- Afficher la liste des commandes du client avec id utilisateur 6
