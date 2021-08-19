@@ -8,14 +8,10 @@
 -- creation des utilisateurs
 -- -----------------------------------------
 INSERT INTO utilisateur (nom, prenom, email, password) VALUES
--- admin
     ('Allard', 'Philippe', 'allard.philippe@allphil.com', 'braininvacation1977'),
--- livreurs
     ('Morrison', 'Jean', 'jeamo@gamil.com', 'ouistiti++'),
     ('Labringe', 'Yvan', 'lbryv@yahoo.fr', 'gpasmal13'),
--- cuisinier
     ('Robiscoun', 'Joseph', 'robijo@protonmail.com', 'youpala'),
--- clients
     ('Giboubu', 'Hélène', 'giboustar@gmail.com', 'holliday84'),
     ('Savoy', 'Claire', 'yourt13@yahoo.fr', 'elisa+valentine'),
     ('Posterki', 'Richard', 'kikiki@protonmail.com', 'toutenbleu+partout+'),
@@ -24,16 +20,8 @@ INSERT INTO utilisateur (nom, prenom, email, password) VALUES
     ('Amersmith', 'Peter', 'amerszmithpet@caramail.fr', 'ieuvBCP1900'),
     ('Klein', 'Henry', 'fritssswepperr@protonmail.com', '17081941---MNCH'),
     ('Vetaire', 'Sophie', 'sosolabrune@gmail.com', 'gxckqSPO2561RGDQhe');
-    
-    
--- -----------------------------------------
--- creation des statuts et types
--- -----------------------------------------
-INSERT INTO statut_livreur (statut) VALUES ('indisponible'), ('libre'), ('en livraison');
-INSERT INTO type_produit (type) VALUES ('plat'), ('dessert');
-INSERT INTO statut_commande (statut) VALUES ('en attente de prise en charge'), ('en cours de livraison'), ('livrée');
 
-    
+
 -- -----------------------------------------
 -- affectation des utilisateurs
 -- -----------------------------------------
@@ -44,7 +32,13 @@ INSERT INTO livreur (utilisateur_id, telephone) VALUES
 INSERT INTO cuisinier (utilisateur_id) (SELECT id FROM utilisateur WHERE email= 'robijo@protonmail.com');
 INSERT INTO client (utilisateur_id, telephone) VALUES
 	((SELECT id FROM utilisateur WHERE email = 'giboustar@gmail.com'), '0442789546'),
-    ((SELECT id FROM utilisateur WHERE email = 'yourt13@yahoo.fr'), '0492230723');
+    ((SELECT id FROM utilisateur WHERE email = 'yourt13@yahoo.fr'), '0492230723'),
+    ((SELECT id FROM utilisateur WHERE email = 'kikiki@protonmail.com'), '0442542136'),
+    ((SELECT id FROM utilisateur WHERE email = 'randalflepetit@gmail.com'), '0442846597'),
+    ((SELECT id FROM utilisateur WHERE email = 'monseigneur@guingan.fr'), '0442136458'),
+    ((SELECT id FROM utilisateur WHERE email = 'amerszmithpet@caramail.fr'), '0442451398'),
+    ((SELECT id FROM utilisateur WHERE email = 'fritssswepperr@protonmail.com'), '0442411311'),
+    ((SELECT id FROM utilisateur WHERE email = 'sosolabrune@gmail.com'), '0442446185');
     
 
 -- -----------------------------------------
@@ -52,7 +46,22 @@ INSERT INTO client (utilisateur_id, telephone) VALUES
 -- -----------------------------------------
 INSERT INTO adresse_client (numero, type_de_voie, nom_de_voie, code_postal, ville, longitude, latitude, principale, client_utilisateur_id) VALUES
 	(4, 'chemin', 'des Espigoules', 13390, 'Auriol', 4.564219, 45.598764, 1, (SELECT id FROM utilisateur WHERE email = 'giboustar@gmail.com')),
-    (125, 'quartier', 'Notre Dame de bon voyage', 13390, 'Auriol', 5.846975, 44.136245, 1, (SELECT id FROM utilisateur WHERE email = 'yourt13@yahoo.fr'));
+    (125, 'quartier', 'Notre Dame de bon voyage', 13390, 'Auriol', 5.846975, 44.136245, 1, (SELECT id FROM utilisateur WHERE email = 'yourt13@yahoo.fr')),
+    (58, 'boulevard', 'de la métallurgie', 13390, 'Pont de Joux', 4.89562, 46.23569, 1, (SELECT id FROM utilisateur WHERE email = 'kikiki@protonmail.com')),
+    (2, 'avenue', 'de la paix', 13390, 'Auriol', 4.56321, 45.36598, 1, (SELECT id FROM utilisateur WHERE email = 'randalflepetit@gmail.com')),
+    (34, 'impasse', 'de la création', 13390, 'Moulin de Redon', 4.23564, 45.23154, 1, (SELECT id FROM utilisateur WHERE email = 'monseigneur@guingan.fr')),
+    (81, 'traverse', 'de la défaite', 13390, 'Auriol', 4.87965, 45.21645, 1, (SELECT id FROM utilisateur WHERE email = 'amerszmithpet@caramail.fr')),
+    (1986, 'rue', 'des nuages', 13390, 'Pont de Joux',4.85462, 46.49569, 1, (SELECT id FROM utilisateur WHERE email = 'fritssswepperr@protonmail.com')),
+    (3, 'boucle',  'des ardoisières', 13390, 'Auriol', 5.21365, 44.215465, 1, (SELECT id FROM utilisateur WHERE email ='sosolabrune@gmail.com')),
+    (NULL, 'quartier', 'Notre Dame', 13390, 'Auriol', 4.56321, 5.648945, 0, (SELECT id FROM utilisateur WHERE email = 'giboustar@gmail.com'));
+    
+    
+-- -----------------------------------------
+-- creation des statuts et types
+-- -----------------------------------------
+INSERT INTO statut_livreur (statut) VALUES ('indisponible'), ('libre'), ('en livraison');
+INSERT INTO type_produit (type) VALUES ('plat'), ('dessert');
+INSERT INTO statut_commande (statut) VALUES ('en attente de prise en charge'), ('en cours de livraison'), ('livrée');
 
 
 -- -----------------------------------------
