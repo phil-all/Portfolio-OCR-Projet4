@@ -2,6 +2,14 @@
 -- hydratation de la bdd
 -- via requètes 'handmade'
 -- -----------------------------------------
+    
+    
+-- -----------------------------------------
+-- creation des statuts et types
+-- -----------------------------------------
+INSERT INTO statut_livreur (statut) VALUES ('indisponible'), ('libre'), ('en livraison');
+INSERT INTO type_produit (type) VALUES ('plat'), ('dessert');
+INSERT INTO statut_commande (statut) VALUES ('en attente de prise en charge'), ('en cours de livraison'), ('livrée');
 
 
 -- -----------------------------------------
@@ -26,9 +34,9 @@ INSERT INTO utilisateur (nom, prenom, email, password) VALUES
 -- affectation des utilisateurs
 -- -----------------------------------------
 INSERT INTO admin (utilisateur_id) (SELECT id FROM utilisateur WHERE email = 'allard.philippe@allphil.com');
-INSERT INTO livreur (utilisateur_id, telephone) VALUES 
-    ((SELECT id FROM utilisateur WHERE email = 'jeamo@gamil.com'), '0665124879'),
-    ((SELECT id FROM utilisateur WHERE email = 'lbryv@yahoo.fr'), '0765128833');
+INSERT INTO livreur (utilisateur_id, statut_livreur_id, telephone) VALUES 
+    ((SELECT id FROM utilisateur WHERE email = 'jeamo@gamil.com'), 1, '0665124879'),
+    ((SELECT id FROM utilisateur WHERE email = 'lbryv@yahoo.fr'), 1, '0765128833');
 INSERT INTO cuisinier (utilisateur_id) (SELECT id FROM utilisateur WHERE email= 'robijo@protonmail.com');
 INSERT INTO client (utilisateur_id, telephone) VALUES
 	((SELECT id FROM utilisateur WHERE email = 'giboustar@gmail.com'), '0442789546'),
@@ -54,14 +62,6 @@ INSERT INTO adresse_client (numero, type_de_voie, nom_de_voie, code_postal, vill
     (1986, 'rue', 'des nuages', 13390, 'Pont de Joux',4.85462, 46.49569, 1, (SELECT id FROM utilisateur WHERE email = 'fritssswepperr@protonmail.com')),
     (3, 'boucle',  'des ardoisières', 13390, 'Auriol', 5.21365, 44.215465, 1, (SELECT id FROM utilisateur WHERE email ='sosolabrune@gmail.com')),
     (NULL, 'quartier', 'Notre Dame', 13390, 'Auriol', 4.56321, 5.648945, 0, (SELECT id FROM utilisateur WHERE email = 'giboustar@gmail.com'));
-    
-    
--- -----------------------------------------
--- creation des statuts et types
--- -----------------------------------------
-INSERT INTO statut_livreur (statut) VALUES ('indisponible'), ('libre'), ('en livraison');
-INSERT INTO type_produit (type) VALUES ('plat'), ('dessert');
-INSERT INTO statut_commande (statut) VALUES ('en attente de prise en charge'), ('en cours de livraison'), ('livrée');
 
 
 -- -----------------------------------------
