@@ -2,7 +2,7 @@
 -- création commande 1 le 2021/08/09 (livraison à l'adresse par défaut du client id 6)
 -- -----------------------------------------------------------------------------------
 -- On initialise la transaction
-BEGIN;
+START TRANSACTION;
 
 -- création table temporaire
 CREATE TABLE tmp_cart (
@@ -18,10 +18,11 @@ CREATE TABLE tmp_cart (
     INSERT INTO reglement (client_utilisateur_id, montant, date_paiement) VALUES (6, (SELECT SUM(prix) FROM tmp_cart), '2021-08-09 11:45:37');
 
 -- on créé une commande
-INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id) VALUES
+INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id, estimation_delais_livraison) VALUES
     (6,
     (SELECT id FROM adresse_client WHERE (client_utilisateur_id = 6 AND principale = 1)),
-    (SELECT MAX( id ) FROM reglement));
+    (SELECT MAX( id ) FROM reglement),
+	'00:18:55');
 
 -- création des lignes commande
 INSERT INTO ligne_commande (fiche_produit_id, quantite, commande_id) VALUES
@@ -51,7 +52,7 @@ COMMIT;
 -- -------------------------------------------------------------------
 -- création commande 2, client 5, produits > fiche_prod id 2, 15 et 16
 -- -------------------------------------------------------------------
-BEGIN;
+START TRANSACTION;
 
 CREATE TABLE tmp_cart (
 	id INT UNSIGNED NOT NULL,
@@ -63,10 +64,11 @@ INSERT INTO tmp_cart (id, prix) VALUES (16, (SELECT prix FROM fiche_produit WHER
 
 INSERT INTO reglement (client_utilisateur_id, montant, date_paiement) VALUES (5, (SELECT SUM(prix) FROM tmp_cart), '2021-08-09 11:52:03');
 
-INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id) VALUES
+INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id, estimation_delais_livraison) VALUES
     (5,
     (SELECT id FROM adresse_client WHERE (client_utilisateur_id = 5 AND principale = 1)),
-    (SELECT MAX( id ) FROM reglement));
+    (SELECT MAX( id ) FROM reglement),
+	'00:15:25');
 
 INSERT INTO ligne_commande (fiche_produit_id, quantite, commande_id) VALUES
     (2, (SELECT COUNT(id) FROM tmp_cart WHERE id = 2), (SELECT MAX( id ) FROM commande)),
@@ -93,7 +95,7 @@ UPDATE commande SET
 -- -------------------------------------------------
 -- création commande 3, client 5, adresse secondaire
 -- -------------------------------------------------
-BEGIN;
+START TRANSACTION;
 
 CREATE TABLE tmp_cart (
 	id INT UNSIGNED NOT NULL,
@@ -106,10 +108,11 @@ INSERT INTO tmp_cart (id, prix) VALUES (17, (SELECT prix FROM fiche_produit WHER
 
 INSERT INTO reglement (client_utilisateur_id, montant, date_paiement) VALUES (5, (SELECT SUM(prix) FROM tmp_cart), '2021-08-10 11:35:03');
 
-INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id) VALUES
+INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id, estimation_delais_livraison) VALUES
     (5,
     (SELECT id FROM adresse_client WHERE (client_utilisateur_id = 5 AND principale = 0)),
-    (SELECT MAX( id ) FROM reglement));
+    (SELECT MAX( id ) FROM reglement),
+	'00:13:02');
 
 INSERT INTO ligne_commande (fiche_produit_id, quantite, commande_id) VALUES
     (3, (SELECT COUNT(id) FROM tmp_cart WHERE id = 3), (SELECT MAX( id ) FROM commande)),
