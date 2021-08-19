@@ -8,7 +8,7 @@ SELECT nom FROM fiche_produit WHERE (id IN (SELECT fiche_produit_id FROM ligne_m
 SELECT fprod.nom, type.type
 FROM fiche_produit AS fprod
 JOIN type_produit AS type
-ON type.id = fprod.type_produit_id
+	ON type.id = fprod.type_produit_id
 WHERE (fprod.id IN (SELECT fiche_produit_id FROM ligne_menu_du_jour WHERE date = '2021/08/13'));
 
 
@@ -28,7 +28,7 @@ ORDER BY DATE;
 SELECT p.id, l.date 
 FROM produit AS p 
 JOIN ligne_menu_du_jour AS l 
-ON l.id = p.ligne_menu_du_jour_id 
+	ON l.id = p.ligne_menu_du_jour_id 
 WHERE p.commande_id IS NULL
 	AND l.fiche_produit_id = 15 
 	AND p.livreur_utilisateur_id = 3
@@ -43,6 +43,88 @@ JOIN reglement AS pay ON pay.id = com.reglement_id
 WHERE client_utilisateur_id = 6;
 
 
--- Afficher le détail de la dernière commande du client id 6
--- ---------------------------------------------------------
-SELECT fp.nom, fp.prix, line.date, 
+-- --------------------------------------------------------------------------------------------------
+
+-- création d'un user comme si il se créait un compte
+-- --------------------------------------------------
+-- champs renseignés dans l'interface de l'appli:
+-- nom : Vetaire
+-- prénom : Sophie
+-- numéro de téléphone : 0442446185
+-- email : sosolabrune@gmail.com
+-- mot de passe : xckqSPO2561RGDQhe
+
+START TRANSACTION;
+INSERT INTO utilisateur (nom, prenom, email, password) VALUES ('Vetaire', 'Sophie', 'sosolabrune@gmail.com', 'gxckqSPO2561RGDQhe');
+INSERT INTO client (utilisateur_id, telephone) VALUES ((SELECT MAX(id) FROM utilisateur, '0442446185');
+COMMIT;
+
+
+-- le select des menus du jour comme si il voulait choisir son menu
+-- ----------------------------------------------------------------
+SELECT fprod.nom, type.type, fprod.prix
+FROM fiche_produit AS fprod
+JOIN type_produit AS type
+	ON type.id = fprod.type_produit_id
+WHERE (fprod.id
+	IN (SELECT fiche_produit_id
+		FROM ligne_menu_du_jour
+		WHERE date = ( SELECT DATE( NOW() ) ) ) );
+
+
+-- le create d'une commande comme le client sélectionnait son repas
+-- ----------------------------------------------------------------
+-- le panier se situe en cache de l'application (array dans $_SESSION)
+-- on peut imaginer une table temporaire créée dès la connexion du client, pour contenir les données de cet array
+CREATE TEMPORARY TABLE tmp_cart (
+	fiche_produit_id SMALLINT UNSIGNED NOT NULL,
+	quantite TINYINT UNSIGNED NOT NULL,
+	prix_unitaire DECIMAL(4,2));
+
+-- le client sélectionne des produits qu'il rajoute à son panier (dans $_SESSION['cart'])
+-- à chaque ajout, on met à jour tmp_cart, exemple:
+INSERT INTO tmp_cart VALUES (11, 2, 7.5);
+INSERT INTO tmp_cart VALUES (5, 1, 7.5);
+
+-- pour afficher le prix total du panier, qui sera réclamé en montant du règlement si panier basculé en commande
+SELECT SUM(quantite*prix_unitaire)
+FROM tmp_cart;
+
+-- le client (id 5) est satisfait par le délai de livraison estimé et bascule son panier en commande
+-- il effectue le règlement, validé par sa banque
+START TRANSACTION;
+INSERT INTO reglement (client_utilisateur_id, montant, date_paiement) VALUES
+	(5,
+	 (SELECT SUM(quantite*prix_unitaire) FROM tmp_cart),
+	 (SELECT DATETIME( NOW() ) );
+
+-- on créé l'entrée dans la table commande
+INSERT INTO commande (client_utilisateur_id, reglement_id, adresse client_id, estimation_delais_livraison)
+VALUES (5, (SELECT MAX(id) FROM reglement), 2, '00:15:21');
+
+-- on affecte chaque ligne du panier à une ligne commande associée à la commande crée
+SET @commande_id = (SELECT MAX(id) FROM commande);
+INSERT INTO ligne_commande (commande_id, quantite, fiche_produit_id)
+VALUES (SELECT @commande_id, quantite, fiche_produit_id FROM tmp_cart);
+
+COMMIT;
+
+
+-- le select de ses commandes comme si 5 min après, il regardait sa liste de commandes pour voir quand le livreur arriverait 
+-- -------------------------------------------------------------------------------------------------------------------------
+SELECT c.id, s.statut, c.heure_prise_en_charge, c.estimation_delais_livraison, c.heure_remise_client
+FROM commande AS c
+JOIN statut_commande AS s
+	ON c.statut_commande_id = s.id;
+
+
+
+
+
+
+
+
+
+
+
+
