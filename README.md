@@ -17,7 +17,8 @@ No versionning
 
 ## Author
 
-* **Philippe Allard-Latour** - [Github](https://github.com/phil-all)
+* **Philippe Allard-Latour** - *Main* - [Github](https://github.com/phil-all)
+* *Other repositeries* - [Github](https://github.com/phil-all?tab=repositories)
 
 ## Licence
 
