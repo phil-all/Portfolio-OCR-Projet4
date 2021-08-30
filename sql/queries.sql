@@ -56,7 +56,7 @@ WHERE client_utilisateur_id = 6;
 
 START TRANSACTION;
 INSERT INTO utilisateur (nom, prenom, email, password) VALUES ('Vetaire', 'Sophie', 'sosolabrune@gmail.com', 'gxckqSPO2561RGDQhe');
-INSERT INTO client (utilisateur_id, telephone) VALUES ((SELECT MAX(id) FROM utilisateur, '0442446185');
+INSERT INTO client (utilisateur_id, telephone) VALUES ((SELECT MAX(id) FROM utilisateur), '0442446185');
 COMMIT;
 
 
@@ -72,22 +72,23 @@ WHERE (fprod.id
 		WHERE date = ( SELECT DATE( NOW() ) ) ) );
 
 
--- le create d'une commande comme le client sélectionnait son repas
--- ----------------------------------------------------------------
+-- le create d'une commande comme si le client sélectionnait son repas
+-- -------------------------------------------------------------------
 -- le panier se situe en cache de l'application (array dans $_SESSION)
 -- on peut imaginer une table temporaire créée dès la connexion du client, pour contenir les données de cet array
 CREATE TEMPORARY TABLE tmp_cart (
 	fiche_produit_id SMALLINT UNSIGNED NOT NULL,
 	quantite TINYINT UNSIGNED NOT NULL,
-	prix_unitaire DECIMAL(4,2));
+	prix_unitaire DECIMAL(4,2),
+    commande_id INT UNSIGNED DEFAULT NULL);
 
 -- le client sélectionne des produits qu'il rajoute à son panier (dans $_SESSION['cart'])
 -- à chaque ajout, on met à jour tmp_cart, exemple:
-INSERT INTO tmp_cart VALUES (11, 2, 7.5);
-INSERT INTO tmp_cart VALUES (5, 1, 7.5);
+INSERT INTO tmp_cart VALUES (11, 2, 7.5, NULL);
+INSERT INTO tmp_cart VALUES (5, 1, 7.5, NULL);
 
 -- pour afficher le prix total du panier, qui sera réclamé en montant du règlement si panier basculé en commande
-SELECT SUM(quantite*prix_unitaire)
+SELECT SUM(quantite*prix_unitaire) "montant total du panier"
 FROM tmp_cart;
 
 -- le client (id 5) est satisfait par le délai de livraison estimé et bascule son panier en commande
@@ -96,26 +97,43 @@ START TRANSACTION;
 INSERT INTO reglement (client_utilisateur_id, montant, date_paiement) VALUES
 	(5,
 	 (SELECT SUM(quantite*prix_unitaire) FROM tmp_cart),
-	 (SELECT DATETIME( NOW() ) );
+	 NOW()
+     );
 
 -- on créé l'entrée dans la table commande
-INSERT INTO commande (client_utilisateur_id, reglement_id, adresse client_id, estimation_delais_livraison)
-VALUES (5, (SELECT MAX(id) FROM reglement), 2, '00:15:21');
+INSERT INTO commande (client_utilisateur_id, adresse_client_id, reglement_id, estimation_delais_livraison)
+VALUES (5,
+		1,
+		(SELECT MAX(id) FROM reglement),
+        '00:15:21');
 
--- on affecte chaque ligne du panier à une ligne commande associée à la commande crée
-SET @commande_id = (SELECT MAX(id) FROM commande);
+-- on affecte chaque ligne du panier à une ligne (de ligne_commande) associée à la commande crée
+UPDATE tmp_cart SET commande_id = (SELECT MAX(id) FROM commande);
 INSERT INTO ligne_commande (commande_id, quantite, fiche_produit_id)
-VALUES (SELECT @commande_id, quantite, fiche_produit_id FROM tmp_cart);
+SELECT commande_id, quantite, fiche_produit_id FROM tmp_cart;
+
+DROP TEMPORARY TABLE tmp_cart;
 
 COMMIT;
 
 
--- le select de ses commandes comme si 5 min après, il regardait sa liste de commandes pour voir quand le livreur arriverait 
--- -------------------------------------------------------------------------------------------------------------------------
-SELECT c.id, s.statut, c.heure_prise_en_charge, c.estimation_delais_livraison, c.heure_remise_client
+-- le select de ses commandes
+-- --------------------------
+SELECT c.id, s.statut, c.heure_prise_en_charge, c.heure_remise_client
 FROM commande AS c
 JOIN statut_commande AS s
-	ON c.statut_commande_id = s.id;
+	ON c.statut_commande_id = s.id
+WHERE client_utilisateur_id = 5;
+
+
+
+-- le select de la commande non livrée pour voir quand le livreur arriverait
+-- -------------------------------------------------------------------------
+SELECT c.id, s.statut, c.estimation_delais_livraison
+FROM commande AS c
+JOIN statut_commande AS s
+	ON c.statut_commande_id = s.id
+WHERE client_utilisateur_id = 5 AND statut_commande_id != 3;
 
 
 
