@@ -138,6 +138,28 @@ WHERE client_utilisateur_id = 5 AND statut_commande_id != 3;
 
 
 
+-- à partir de cas d'utilisation et diag de séquence:
+-- --------------------------------------------------
+-- l'admin recherche un produit par nom ou description pour l'affecter à un menu du jour, ou le créer le cas échéant
+-- -----------------------------------------------------------------------------------------------------------------
+-- par ex : terme recherché : pates palourdes / on lui propose un résultat contenant au moins un des deux termes et 
+-- renvoyant l'id, le type, le nom et la description (ici pour cet exemple, les termes recherchés ne sont pas dans l'intitulé mais la description)
+SELECT f.id, t.type, f.nom, f.description
+FROM fiche_produit AS f
+JOIN type_produit AS t
+	ON f.type_produit_id = t.id
+WHERE (f.nom like "%pates%" OR "%palourdes%") OR (f.description like "%pates%" OR "%palourdes%");
+
+-- l'admin associe un produit à un menu du jour
+-- --------------------------------------------
+-- la requète précédente a renvoyé le résultat suivant:
+-- id	+ type	+ nom						+ description							+
+-- 3	+ plat	+ Linguini alle vongole		+ Recette traditionnelle de pates....	+
+-- on affecte ce plat au menu du jour : 17 sept 2021
+INSERT INTO ligne_menu_du_jour (fiche_produit_id, date) VALUES (3, "2021/09/17");
+
+
+
 
 
 
